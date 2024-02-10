@@ -26,10 +26,8 @@ public class Blog {
     private String title;
     @NotEmpty
     private String text;
-    @Lob // Indicates a large object, such as a BLOB
-    @Column(name = "image", columnDefinition="LONGBLOB")
-    @Basic(fetch = FetchType.LAZY) // Optional: Use lazy loading for better performance
-    private byte[] image;
+    @NotEmpty
+    private String imageUrl;
     @CreationTimestamp
     private LocalDateTime createdOn;
     @UpdateTimestamp

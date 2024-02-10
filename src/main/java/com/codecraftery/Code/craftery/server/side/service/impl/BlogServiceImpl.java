@@ -1,5 +1,6 @@
 package com.codecraftery.Code.craftery.server.side.service.impl;
 
+import com.codecraftery.Code.craftery.server.side.dto.BlogDto;
 import com.codecraftery.Code.craftery.server.side.model.Blog;
 import com.codecraftery.Code.craftery.server.side.repository.BlogRepository;
 import com.codecraftery.Code.craftery.server.side.service.BlogService;
@@ -10,7 +11,11 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+
+
+
 @Service
 public class BlogServiceImpl implements BlogService {
     private BlogRepository blogRepository;
@@ -20,8 +25,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<Blog> getAllBlogs() {
-        return blogRepository.findAll();
+    public List<Blog> getAllBlogs() throws IOException{
+        List<Blog> blogs = blogRepository.findAll();
+
+
+        return blogs;
     }
 
     @Override
@@ -31,8 +39,14 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Blog addBlog(Blog blog, File imageFile) {
-        try {
+    public Blog addBlog(Blog blog) throws IOException {
+        Blog _blog = blogRepository.save(blog);
+        return _blog;
+    }
+/*
+    @Override
+    public BlogDto addBlog(BlogDto) {
+      /*  try {
             if (imageFile != null && imageFile.exists()) {
                 byte[] imageBytes = FileUtils.readFileToByteArray(imageFile);
                 blog.setImage(imageBytes); // Set the image bytes to the blog entity
@@ -42,8 +56,11 @@ public class BlogServiceImpl implements BlogService {
             // Handle the exception
             e.printStackTrace();
             return null;
-        }
+
+        return null;
     }
+    */
+
 
     @Override
     public void deleteBuId(Long id) {
