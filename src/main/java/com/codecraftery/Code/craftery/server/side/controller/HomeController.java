@@ -4,11 +4,14 @@ import com.codecraftery.Code.craftery.server.side.model.Blog;
 import com.codecraftery.Code.craftery.server.side.model.BlogCategory;
 import com.codecraftery.Code.craftery.server.side.service.BlogCategoryService;
 import com.codecraftery.Code.craftery.server.side.service.BlogService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
@@ -28,25 +31,39 @@ public class HomeController {
         return blogs;
     }
     @PostMapping("/create-blog")
-    public ResponseEntity<Blog> uploadBlog(@RequestParam("image") MultipartFile image,
+    public ResponseEntity<Blog> uploadBlog(@RequestParam("image") MultipartFile imageFile,
                                            @RequestParam("title") String title,
                                            @RequestParam("text") String text,
                                            @RequestParam("category") String category) {
         try {
-            BlogCategory _category = blogCategoryService.findByName(category); // You need to create an instance of BlogCategory here
+            // Retrieve the BlogCategory instance by name
+            BlogCategory categoryObj = blogCategoryService.findByName(category);
 
+            // Convert MultipartFile to File
+            File image = convertMultipartFileToFile(imageFile);
 
+            // Create the Blog object
             Blog blog = Blog.builder()
                     .title(title)
                     .text(text)
-                    .blogCategory(_category)
+                    .blogCategory(categoryObj)
                     .build();
 
+            // Save the Blog entity with the image
             Blog savedBlog = blogService.addBlog(blog, image);
 
+            // Return the ResponseEntity with the saved Blog entity
             return new ResponseEntity<>(savedBlog, HttpStatus.CREATED);
         } catch (Exception e) {
+            // Handle exceptions and return Internal Server Error response
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // Helper method to convert MultipartFile to File
+    private File convertMultipartFileToFile(MultipartFile multipartFile) throws IOException {
+        File file = new File(multipartFile.getOriginalFilename());
+        FileUtils.writeByteArrayToFile(file, multipartFile.getBytes());
+        return file;
     }
 }

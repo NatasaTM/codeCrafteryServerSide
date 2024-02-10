@@ -3,8 +3,9 @@ package com.codecraftery.Code.craftery.server.side.service.impl;
 import com.codecraftery.Code.craftery.server.side.model.Blog;
 import com.codecraftery.Code.craftery.server.side.repository.BlogRepository;
 import com.codecraftery.Code.craftery.server.side.service.BlogService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +31,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Blog addBlog(Blog blog, MultipartFile image) {
-
+    public Blog addBlog(Blog blog, File imageFile) {
         try {
-            if (image != null && !image.isEmpty()) {
-                blog.setImage(image.getBytes()); // Set the image bytes to the blog entity
+            if (imageFile != null && imageFile.exists()) {
+                byte[] imageBytes = FileUtils.readFileToByteArray(imageFile);
+                blog.setImage(imageBytes); // Set the image bytes to the blog entity
             }
             return blogRepository.save(blog);
         } catch (IOException e) {
