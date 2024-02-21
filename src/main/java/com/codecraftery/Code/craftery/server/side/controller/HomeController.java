@@ -2,8 +2,8 @@ package com.codecraftery.Code.craftery.server.side.controller;
 
 import com.codecraftery.Code.craftery.server.side.dto.BlogDto;
 import com.codecraftery.Code.craftery.server.side.model.Blog;
-import com.codecraftery.Code.craftery.server.side.model.BlogCategory;
-import com.codecraftery.Code.craftery.server.side.service.BlogCategoryService;
+import com.codecraftery.Code.craftery.server.side.model.Category;
+import com.codecraftery.Code.craftery.server.side.service.CategoryService;
 import com.codecraftery.Code.craftery.server.side.service.BlogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +18,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class HomeController {
-    private BlogCategoryService blogCategoryService;
+    private CategoryService categoryService;
     private BlogService blogService;
 
-    public HomeController(BlogCategoryService blogCategoryService, BlogService blogService) {
-        this.blogCategoryService = blogCategoryService;
+    public HomeController(CategoryService blogCategoryService, BlogService blogService) {
+        this.categoryService = blogCategoryService;
         this.blogService = blogService;
     }
     @GetMapping("/data")
-    public List<Blog> getAllBlogs(){
-        List<Blog>blogs = null;
+    public List<BlogDto> getAllBlogs(){
+        List<BlogDto>blogs = null;
         try {
             blogs = blogService.getAllBlogs();
         } catch (IOException e) {
@@ -39,27 +39,27 @@ public class HomeController {
 
 
 @PostMapping("/create-blog")
-public ResponseEntity<Blog> uploadBlog(@RequestParam("image") String imageUrl,
+public ResponseEntity<BlogDto> uploadBlog(@RequestParam("image") String imageUrl,
                                        @RequestParam("title") String title,
                                        @RequestParam("text") String text,
-                                       @RequestParam("category") String category) {
+                                       @RequestParam("categories") List<Long> categoryIds) {
     try {
-        // Retrieve the BlogCategory instance by name
-        BlogCategory categoryObj = blogCategoryService.findByName(category);
 
-        // Save the image file and get the path
-      //  String imagePath = saveImage(imageFile);
+        List<Category> categories = categoryService.findListById(categoryIds);
+
+
 
         // Create the Blog object
-        Blog blog = Blog.builder()
+        BlogDto blog = BlogDto.builder()
                 .title(title)
                 .text(text)
-                .blogCategory(categoryObj)
+                .blogCategories(categories)
                 .imageUrl(imageUrl) // Assign imagePath to image field
                 .build();
 
+
         // Save the Blog entity
-        Blog savedBlog = blogService.addBlog(blog);
+        BlogDto savedBlog = blogService.addBlog(blog);
 
         // Return the ResponseEntity with the saved Blog entity
         return new ResponseEntity<>(savedBlog, HttpStatus.CREATED);
@@ -70,19 +70,6 @@ public ResponseEntity<Blog> uploadBlog(@RequestParam("image") String imageUrl,
     }
 }
 
-    // Helper method to save image file and return its path
-    private String saveImage(MultipartFile imageFile) throws IOException {
-        String fileName = imageFile.getOriginalFilename();
-       // String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8); // Encode the filename
 
-        // Save the image file to the static directory
-        Path uploadDir = Paths.get("static");
-        Path filePath = uploadDir.resolve(fileName);
-        Files.createDirectories(uploadDir); // Ensure the directory exists
-        imageFile.transferTo(filePath); // Save the image file
-
-        // Return the relative path to the saved image
-        return "/static/" + fileName;
-    }
 
 }

@@ -7,16 +7,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="blog_category")
-public class BlogCategory {
+@Table
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty
+    @Column(unique = true)
     private String name;
+
+//    @ManyToMany(mappedBy = "projectCategories")
+//    private List<Project> projects;
+//
+//    @ManyToMany(mappedBy = "blogCategories")
+//    private List<Blog> blogs;
 }

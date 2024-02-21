@@ -1,6 +1,6 @@
 package com.codecraftery.Code.craftery.server.side.dto;
 
-import com.codecraftery.Code.craftery.server.side.model.BlogCategory;
+import com.codecraftery.Code.craftery.server.side.model.Category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -22,11 +23,11 @@ public class BlogDto {
 
     private String text;
 
-    private File image;
+    private String imageUrl;
 
     private LocalDateTime createdOn;
 
     private LocalDateTime updatedOn;
 
-    private BlogCategory blogCategory;
+    private List<Category> blogCategories;
 }
