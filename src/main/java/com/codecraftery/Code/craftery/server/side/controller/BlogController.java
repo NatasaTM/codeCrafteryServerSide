@@ -1,31 +1,27 @@
 package com.codecraftery.Code.craftery.server.side.controller;
 
 import com.codecraftery.Code.craftery.server.side.dto.BlogDto;
-import com.codecraftery.Code.craftery.server.side.model.Blog;
 import com.codecraftery.Code.craftery.server.side.model.Category;
 import com.codecraftery.Code.craftery.server.side.service.CategoryService;
 import com.codecraftery.Code.craftery.server.side.service.BlogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
-public class HomeController {
+public class BlogController {
     private CategoryService categoryService;
     private BlogService blogService;
 
-    public HomeController(CategoryService blogCategoryService, BlogService blogService) {
+    public BlogController(CategoryService blogCategoryService, BlogService blogService) {
         this.categoryService = blogCategoryService;
         this.blogService = blogService;
     }
-    @GetMapping("/data")
+    @GetMapping("/blogs")
     public List<BlogDto> getAllBlogs(){
         List<BlogDto>blogs = null;
         try {
@@ -39,10 +35,10 @@ public class HomeController {
 
 
 @PostMapping("/create-blog")
-public ResponseEntity<BlogDto> uploadBlog(@RequestParam("image") String imageUrl,
-                                       @RequestParam("title") String title,
-                                       @RequestParam("text") String text,
-                                       @RequestParam("categories") List<Long> categoryIds) {
+public ResponseEntity<BlogDto> saveBlog (@RequestParam("image") String imageUrl,
+                                        @RequestParam("title") String title,
+                                        @RequestParam("text") String text,
+                                        @RequestParam("categories") List<Long> categoryIds) {
     try {
 
         List<Category> categories = categoryService.findListById(categoryIds);

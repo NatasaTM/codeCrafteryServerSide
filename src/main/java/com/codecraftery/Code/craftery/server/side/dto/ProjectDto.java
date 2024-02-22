@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,19 +13,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BlogDto {
+public class ProjectDto {
 
     private Long id;
 
-    private String title;
+    private String name;
 
-    private String text;
+    private String projectUrl;
 
     private String imageUrl;
+
+    private String description;
 
     private LocalDateTime createdOn;
 
     private LocalDateTime updatedOn;
 
-    private List<Category> blogCategories;
+    private List<Category> projectCategories;
 }

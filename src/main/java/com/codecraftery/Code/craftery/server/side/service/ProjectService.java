@@ -1,16 +1,17 @@
 package com.codecraftery.Code.craftery.server.side.service;
 
 
+import com.codecraftery.Code.craftery.server.side.dto.ProjectDto;
 import com.codecraftery.Code.craftery.server.side.model.Project;
 
 import java.util.List;
 
 public interface ProjectService {
-    Project getProject(Long id);
+    ProjectDto getProject(Long id);
 
-    List<Project> getAllProjects();
+    List<ProjectDto> getAllProjects();
 
-    Project addProject(Project project);
+    ProjectDto addProject(ProjectDto project);
 
     void deleteById(Long id);
 }
