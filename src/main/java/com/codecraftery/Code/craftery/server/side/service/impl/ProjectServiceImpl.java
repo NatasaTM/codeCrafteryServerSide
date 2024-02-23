@@ -4,6 +4,7 @@ import com.codecraftery.Code.craftery.server.side.dto.ProjectDto;
 import com.codecraftery.Code.craftery.server.side.model.Project;
 import com.codecraftery.Code.craftery.server.side.repository.ProjectRepository;
 import com.codecraftery.Code.craftery.server.side.service.ProjectService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,16 +14,17 @@ import static com.codecraftery.Code.craftery.server.side.mapper.ProjectMapper.ma
 import static com.codecraftery.Code.craftery.server.side.mapper.ProjectMapper.mapProjectToProjectDto;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
-    }
+//    public ProjectServiceImpl(ProjectRepository projectRepository) {
+//        this.projectRepository = projectRepository;
+//    }
 
     @Override
-    public ProjectDto getProject(Long id) {
+    public ProjectDto findById(Long id) {
         ProjectDto projectDto = mapProjectToProjectDto(projectRepository.findById(id).get());
         return projectDto;
     }
@@ -49,5 +51,10 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteById(Long id) {
         projectRepository.deleteById(id);
 
+    }
+
+    @Override
+    public ProjectDto updateProject(Long id) {
+        return null;
     }
 }

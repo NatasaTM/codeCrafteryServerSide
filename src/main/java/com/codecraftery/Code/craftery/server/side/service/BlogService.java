@@ -13,6 +13,6 @@ public interface BlogService {
     List<BlogDto> getAllBlogs() throws BlogServiceException;
     BlogDto findById(Long id) throws  BlogServiceException, BlogNotFoundException;
     BlogDto addBlog(BlogDto blogDto) throws BlogCreationException;
-    void deleteById(Long id) throws  BlogServiceException;
-    BlogDto updateBlog(BlogDto blogDto) throws BlogServiceException, BlogNotFoundException;
+    void deleteById(Long id) throws BlogServiceException, BlogNotFoundException;
+    BlogDto updateBlog(BlogDto blogDto,Long id) throws BlogServiceException, BlogNotFoundException;
 }

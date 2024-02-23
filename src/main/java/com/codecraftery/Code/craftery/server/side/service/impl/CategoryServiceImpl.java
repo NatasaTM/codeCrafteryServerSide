@@ -3,15 +3,16 @@ package com.codecraftery.Code.craftery.server.side.service.impl;
 import com.codecraftery.Code.craftery.server.side.model.Category;
 import com.codecraftery.Code.craftery.server.side.repository.CategoryRepository;
 import com.codecraftery.Code.craftery.server.side.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
+    @Autowired
     public CategoryServiceImpl(CategoryRepository blogCategoryRepository) {
         this.categoryRepository = blogCategoryRepository;
     }
