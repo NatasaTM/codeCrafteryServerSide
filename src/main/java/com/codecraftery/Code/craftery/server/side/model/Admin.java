@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,8 +21,11 @@ public class Admin {
     @Id
     @Column(unique = true)
     @NotEmpty
+    @Email
     private String email;
     @NotEmpty
     private String password;
+    @NotEmpty
+    private String name;
 
 }
