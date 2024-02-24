@@ -36,13 +36,13 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.addProject(projectDto), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/blogs/{id}")
+    @DeleteMapping("/projects/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) throws ProjectNotFoundException, ProjectServiceException {
         projectService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/blogs/{id}")
+    @GetMapping("/projects/{id}")
     public ResponseEntity<ProjectDto> getProjectById(@PathVariable Long id) throws ProjectNotFoundException, ProjectServiceException {
         return ResponseEntity.ok(projectService.findById(id));
     }
