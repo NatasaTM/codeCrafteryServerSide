@@ -65,11 +65,9 @@ public class BlogServiceImpl implements BlogService {
 
         Set<ConstraintViolation<Blog>> violations = getConstraintViolations(blogDto);
         if (!violations.isEmpty()) {
-            String errorMessage = "There were errors validating your blog submission:";
-            for (ConstraintViolation<Blog> violation : violations) {
-                errorMessage += String.format("- %s: %s", violation.getPropertyPath().toString(), violation.getMessage());
-            }
-            throw new BlogCreationException(errorMessage);
+            logger.error("BlogValidation");
+            throw new BlogCreationException(buildValidationErrorMessage(violations));
+
         }
         try {
             Blog blog = mapBlogDtoToBlog(blogDto);
@@ -92,7 +90,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public void deleteById(Long id) throws BlogServiceException, BlogNotFoundException {
-        if(!blogRepository.existsById(id)){
+        if (!blogRepository.existsById(id)) {
             throw new BlogNotFoundException("Blog with ID " + id + " not found");
         }
         try {
@@ -101,36 +99,44 @@ public class BlogServiceImpl implements BlogService {
             ex.printStackTrace();
             throw new BlogServiceException("Error while deleting blog", ex);
         } catch (Exception e) {
-            logger.error("Failed to delete blog" +e);
+            logger.error("Failed to delete blog" + e);
             throw new BlogServiceException("Failed to delete blog" + e.getMessage() + e);
         }
 
     }
 
     @Override
-    public BlogDto updateBlog(BlogDto blogDto,Long id) throws BlogServiceException, BlogNotFoundException {
+    public BlogDto updateBlog(BlogDto blogDto, Long id) throws BlogServiceException, BlogNotFoundException, BlogCreationException {
+
         Set<ConstraintViolation<Blog>> violations = getConstraintViolations(blogDto);
         if (!violations.isEmpty()) {
-            String errorMessage = "There were errors validating your blog submission:";
-            for (ConstraintViolation<Blog> violation : violations) {
-                errorMessage += String.format("- %s: %s", violation.getPropertyPath().toString(), violation.getMessage());
-            }
-            throw new BlogServiceException(errorMessage);
+            logger.error("BlogValidation");
+            throw new BlogCreationException(buildValidationErrorMessage(violations));
         }
+
         try {
-            //Long id = blogDto.getId();
-            Blog existingBlog = blogRepository.findById(id).orElseThrow(() -> new BlogNotFoundException("Blog with ID " + id + " not found"));
-            existingBlog = Blog.builder()
-                    .title(blogDto.getTitle())
-                    .text(blogDto.getText())
-                    .imageUrl(blogDto.getImageUrl())
-                    .blogCategories(blogDto.getBlogCategories())
-                    .build();
-            Blog savedBlog = blogRepository.save(existingBlog);
-            return mapBlogToBlogDto(savedBlog);
+            Blog blog = blogRepository.findById(id).get();
+            if (blog == null) {
+                throw new BlogNotFoundException("Blog with ID " + id + " not found");
+            }
+
+            blog.setTitle(blogDto.getTitle());
+            blog.setText(blogDto.getText());
+            blog.setImageUrl(blogDto.getImageUrl());
+            blog.setBlogCategories(blogDto.getBlogCategories());
+
+            return mapBlogToBlogDto(blogRepository.save(blog));
         } catch (DataAccessException e) {
-            logger.error("Error updating blog" + e);
+            logger.error(e.getMessage());
             throw new BlogServiceException("Error updating blog: " + e.getMessage(), e);
         }
+    }
+
+    private String buildValidationErrorMessage(Set<ConstraintViolation<Blog>> violations) {
+        StringBuilder errorMessage = new StringBuilder("Validation errors:");
+        for (ConstraintViolation<Blog> violation : violations) {
+            errorMessage.append("\n- ").append(violation.getPropertyPath()).append(": ").append(violation.getMessage());
+        }
+        return errorMessage.toString();
     }
 }
