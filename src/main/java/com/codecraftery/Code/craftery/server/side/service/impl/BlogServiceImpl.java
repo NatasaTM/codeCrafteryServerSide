@@ -82,12 +82,6 @@ public class BlogServiceImpl implements BlogService {
         }
     }
 
-    private Set<ConstraintViolation<Blog>> getConstraintViolations(BlogDto blogDto) {
-        Blog validateBlog = mapBlogDtoToBlog(blogDto);
-        Set<ConstraintViolation<Blog>> violations = validator.validate(validateBlog); // Validate the Blog object
-        return violations;
-    }
-
     @Override
     public void deleteById(Long id) throws BlogServiceException, BlogNotFoundException {
         if (!blogRepository.existsById(id)) {
@@ -130,6 +124,12 @@ public class BlogServiceImpl implements BlogService {
             logger.error(e.getMessage());
             throw new BlogServiceException("Error updating blog: " + e.getMessage(), e);
         }
+    }
+
+    private Set<ConstraintViolation<Blog>> getConstraintViolations(BlogDto blogDto) {
+        Blog validateBlog = mapBlogDtoToBlog(blogDto);
+        Set<ConstraintViolation<Blog>> violations = validator.validate(validateBlog); // Validate the Blog object
+        return violations;
     }
 
     private String buildValidationErrorMessage(Set<ConstraintViolation<Blog>> violations) {

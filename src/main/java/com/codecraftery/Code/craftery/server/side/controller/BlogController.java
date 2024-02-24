@@ -20,7 +20,6 @@ import java.util.List;
 
 public class BlogController {
 
-    private final CategoryService categoryService;
     private final BlogService blogService;
 
 

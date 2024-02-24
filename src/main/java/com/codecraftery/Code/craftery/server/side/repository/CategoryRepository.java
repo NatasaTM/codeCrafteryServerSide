@@ -8,10 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Category findByName(String name);
+  //  Category findByName(String name);
 
-   // @Query("SELECT b.category_id, c.name FROM BlogCategory b JOIN Category c ON (c.id = b.category_id) WHERE b.blog_id = :blogId")
-   // List<Category> findCategoriesByBlogId(@Param("blogId") Long blogId);
 
 
 

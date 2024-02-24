@@ -1,53 +1,137 @@
 package com.codecraftery.Code.craftery.server.side.service.impl;
 
+import com.codecraftery.Code.craftery.server.side.dto.CategoryDto;
+import com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions.CategoryCreationException;
+import com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions.CategoryNotFoundException;
+import com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions.CategoryServiceException;
 import com.codecraftery.Code.craftery.server.side.model.Category;
 import com.codecraftery.Code.craftery.server.side.repository.CategoryRepository;
 import com.codecraftery.Code.craftery.server.side.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.codecraftery.Code.craftery.server.side.mapper.CategoryMapper.mapCategoryDtoToCategory;
+import static com.codecraftery.Code.craftery.server.side.mapper.CategoryMapper.mapCategoryToCategoryDto;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
+    private final Validator validator;
 
-    @Autowired
-    public CategoryServiceImpl(CategoryRepository blogCategoryRepository) {
-        this.categoryRepository = blogCategoryRepository;
+    @Override
+    public List<CategoryDto> getAllCategories() throws CategoryServiceException {
+        try {
+            List<CategoryDto> categoryDtos = categoryRepository.findAll().stream()
+                    .map(category -> mapCategoryToCategoryDto(category))
+                    .collect(Collectors.toList());
+
+            return categoryDtos;
+        } catch (DataAccessException ex) {
+            logger.error("Error while retrieving categories from the database", ex);
+            throw new CategoryServiceException("Failed to retrieve categories", ex);
+        }
     }
 
     @Override
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public CategoryDto addCategory(CategoryDto categoryDto) throws CategoryCreationException {
+        Set<ConstraintViolation<Category>> violations = getConstraintViolations(categoryDto);
+        if (!violations.isEmpty()) {
+            logger.error("BlogValidation");
+            throw new CategoryCreationException(buildValidationErrorMessage(violations));
+
+        }
+        try {
+            Category category = mapCategoryDtoToCategory(categoryDto);
+            Category savedCategory = categoryRepository.save(category);
+            if (savedCategory == null) {
+                throw new CategoryCreationException("Error saving category to database: ");
+            }
+            return mapCategoryToCategoryDto(savedCategory);
+        } catch (DataAccessException e) {
+            logger.error("Error occurred while adding category to database" + e);
+            throw new CategoryCreationException("Error saving category to database: " + e.getMessage(), e);
+        }
+
     }
 
     @Override
-    public void addBlogCategory(Category category) {
-        categoryRepository.save(category);
+    public CategoryDto findById(Long id) throws CategoryServiceException, CategoryNotFoundException {
+        try {
+            Category category = categoryRepository.findById(id)
+                    .orElseThrow(() -> new CategoryNotFoundException("Blog with ID " + id + " not found"));
+            CategoryDto categoryDto = mapCategoryToCategoryDto(category);
+            return categoryDto;
+        } catch (DataAccessException e) {
+            // Log the error if needed
+            logger.error("Error finding category with ID " + id, e);
+            throw new CategoryServiceException("Error finding category with ID " + id + ": " + e.getMessage(), e);
+        }
     }
 
     @Override
-    public Category findById(Long id) {
-        Category blogCategory = categoryRepository.findById(id).get();
-        return blogCategory;
+    public void deleteById(Long id) throws CategoryServiceException, CategoryNotFoundException {
+        if (!categoryRepository.existsById(id)) {
+            throw new CategoryNotFoundException("Category with ID " + id + " not found");
+        }
+        try {
+            categoryRepository.deleteById(id);
+        } catch (DataAccessException ex) {
+            ex.printStackTrace();
+            throw new CategoryServiceException("Error while deleting category", ex);
+        } catch (Exception e) {
+            logger.error("Failed to delete category" + e);
+            throw new CategoryServiceException("Failed to delete category" + e.getMessage() + e);
+        }
+
+
     }
 
     @Override
-    public void deleteById(Long id) {
-        categoryRepository.deleteById(id);
+    public CategoryDto updateCategory(CategoryDto categoryDto, Long id) throws CategoryServiceException, CategoryNotFoundException, CategoryCreationException {
+        Set<ConstraintViolation<Category>> violations = getConstraintViolations(categoryDto);
+        if (!violations.isEmpty()) {
+            logger.error("CategoryValidation");
+            throw new CategoryCreationException(buildValidationErrorMessage(violations));
+        }
 
+        try {
+            Category category = categoryRepository.findById(id).get();
+            if (category == null) {
+                throw new CategoryNotFoundException("Category with ID " + id + " not found");
+            }
+
+            category.setName(categoryDto.getName());
+
+            return mapCategoryToCategoryDto(categoryRepository.save(category));
+        } catch (DataAccessException e) {
+            logger.error(e.getMessage());
+            throw new CategoryServiceException("Error updating category: " + e.getMessage(), e);
+        }
     }
 
-    @Override
-    public Category findByName(String name) {
-        Category category = categoryRepository.findByName(name);
-        return category;
+    private Set<ConstraintViolation<Category>> getConstraintViolations(CategoryDto categoryDto) {
+        Category validateCategory = mapCategoryDtoToCategory(categoryDto);
+        Set<ConstraintViolation<Category>> violations = validator.validate(validateCategory);
+        return violations;
     }
 
-    @Override
-    public List<Category> findListById(List<Long> ids) {
-
-        return categoryRepository.findAllById(ids);
+    private String buildValidationErrorMessage(Set<ConstraintViolation<Category>> violations) {
+        StringBuilder errorMessage = new StringBuilder("Validation errors:");
+        for (ConstraintViolation<Category> violation : violations) {
+            errorMessage.append("<br>- ").append(violation.getPropertyPath()).append(": ").append(violation.getMessage());
+        }
+        return errorMessage.toString();
     }
+
 }
