@@ -11,5 +11,5 @@ public class AdminMapper {
                 .name(admin.getName())
                 .build();
     }
-    
+
 }
