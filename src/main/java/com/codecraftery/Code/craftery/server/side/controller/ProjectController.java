@@ -36,7 +36,7 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.addProject(projectDto), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/projects/{id}")
+    @DeleteMapping("/delete-project/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) throws ProjectNotFoundException, ProjectServiceException {
         projectService.deleteById(id);
         return ResponseEntity.ok().build();

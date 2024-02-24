@@ -1,8 +1,9 @@
-package com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions;
+package com.codecraftery.Code.craftery.server.side.exceptions;
 
 
-import com.codecraftery.Code.craftery.server.side.exceptions.ErrorResponse;
-
+import com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions.ProjectCreationException;
+import com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions.ProjectNotFoundException;
+import com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions.ProjectServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class ProjectExceptionHandler {
     public ResponseEntity<ErrorResponse> handleProjectNotFoundException(ProjectNotFoundException ex) {
 
         logger.error("Project not found: {}", ex.getMessage());
-//
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.of(
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage(),

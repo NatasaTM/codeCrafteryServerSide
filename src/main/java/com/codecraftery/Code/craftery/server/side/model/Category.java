@@ -23,9 +23,4 @@ public class Category {
     @Column(unique = true)
     private String name;
 
-//    @ManyToMany(mappedBy = "projectCategories")
-//    private List<Project> projects;
-//
-//    @ManyToMany(mappedBy = "blogCategories")
-//    private List<Blog> blogs;
 }
