@@ -135,7 +135,7 @@ public class BlogServiceImpl implements BlogService {
     private String buildValidationErrorMessage(Set<ConstraintViolation<Blog>> violations) {
         StringBuilder errorMessage = new StringBuilder("Validation errors:");
         for (ConstraintViolation<Blog> violation : violations) {
-            errorMessage.append("\n- ").append(violation.getPropertyPath()).append(": ").append(violation.getMessage());
+            errorMessage.append("<br>- ").append(violation.getPropertyPath()).append(": ").append(violation.getMessage());
         }
         return errorMessage.toString();
     }

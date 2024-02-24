@@ -25,7 +25,7 @@ public class BlogController {
 
 
     @GetMapping("/blogs")
-    public ResponseEntity<List<BlogDto>> getAllBlogs() throws BlogServiceException {
+    public ResponseEntity<List<BlogDto>> getBlogs() throws BlogServiceException {
 
         return ResponseEntity.ok(blogService.getAllBlogs());
     }
@@ -46,9 +46,10 @@ public class BlogController {
     }
 
     @GetMapping("/blogs/{id}")
-    public ResponseEntity<BlogDto> getBlog(@PathVariable Long id) throws BlogServiceException, BlogNotFoundException {
+    public ResponseEntity<BlogDto> getBlogById(@PathVariable Long id) throws BlogServiceException, BlogNotFoundException {
 
         BlogDto blog = blogService.findById(id);
+
         return ResponseEntity.ok(blog);
 
 
