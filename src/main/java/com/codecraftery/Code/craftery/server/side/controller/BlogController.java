@@ -56,7 +56,7 @@ public class BlogController {
     }
 
     @PutMapping("/update-blog/{id}")
-    public ResponseEntity<BlogDto> updateBlog(@PathVariable Long id, @RequestBody BlogDto blogDto) throws BlogServiceException, BlogNotFoundException, BlogCreationException, ValidationException {
+    public ResponseEntity<BlogDto> updateBlog(@PathVariable Long id, @RequestBody BlogDto blogDto) throws BlogServiceException, BlogNotFoundException, ValidationException {
 
         BlogDto updatedBlog = blogService.updateBlog(blogDto, id);
         return ResponseEntity.ok(updatedBlog);

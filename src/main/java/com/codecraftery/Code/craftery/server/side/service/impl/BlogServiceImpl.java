@@ -4,6 +4,7 @@ import com.codecraftery.Code.craftery.server.side.dto.BlogDto;
 import com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions.BlogCreationException;
 import com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions.BlogNotFoundException;
 import com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions.BlogServiceException;
+import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationErrorMessageBuilder;
 import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationException;
 import com.codecraftery.Code.craftery.server.side.model.Blog;
 import com.codecraftery.Code.craftery.server.side.repository.BlogRepository;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 import static com.codecraftery.Code.craftery.server.side.mapper.BlogMapper.mapBlogDtoToBlog;
 import static com.codecraftery.Code.craftery.server.side.mapper.BlogMapper.mapBlogToBlogDto;
 
@@ -32,9 +32,9 @@ public class BlogServiceImpl implements BlogService {
 
     private final BlogRepository blogRepository;
     private final BlogValidator blogValidator;
-
     private static final Logger logger = LoggerFactory.getLogger(BlogServiceImpl.class);
-    private final Validator validator;
+    private final ValidationErrorMessageBuilder<Blog> validationErrorMessageBuilder;
+
 
 
     @Override
@@ -71,7 +71,7 @@ public class BlogServiceImpl implements BlogService {
         Set<ConstraintViolation<Blog>> violations = blogValidator.validate(mapBlogDtoToBlog(blogDto));
         if (!violations.isEmpty()) {
             logger.error("BlogValidation");
-            throw new ValidationException(buildValidationErrorMessage(violations));
+            throw new ValidationException(validationErrorMessageBuilder.buildValidationErrorMessage(violations));
 
         }
         try {
@@ -105,12 +105,12 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public BlogDto updateBlog(BlogDto blogDto, Long id) throws BlogServiceException, BlogNotFoundException, BlogCreationException, ValidationException {
+    public BlogDto updateBlog(BlogDto blogDto, Long id) throws BlogServiceException, BlogNotFoundException, ValidationException {
 
         Set<ConstraintViolation<Blog>> violations = blogValidator.validate(mapBlogDtoToBlog(blogDto));
         if (!violations.isEmpty()) {
             logger.error("BlogValidation");
-            throw new ValidationException(buildValidationErrorMessage(violations));
+            throw new ValidationException(validationErrorMessageBuilder.buildValidationErrorMessage(violations));
         }
 
         try {
@@ -131,17 +131,4 @@ public class BlogServiceImpl implements BlogService {
         }
     }
 
-//    private Set<ConstraintViolation<Blog>> getConstraintViolations(BlogDto blogDto) {
-//        Blog validateBlog = mapBlogDtoToBlog(blogDto);
-//        Set<ConstraintViolation<Blog>> violations = validator.validate(validateBlog); // Validate the Blog object
-//        return violations;
-//    }
-
-    private String buildValidationErrorMessage(Set<ConstraintViolation<Blog>> violations) {
-        StringBuilder errorMessage = new StringBuilder("Validation errors:");
-        for (ConstraintViolation<Blog> violation : violations) {
-            errorMessage.append("<br>- ").append(violation.getPropertyPath()).append(": ").append(violation.getMessage());
-        }
-        return errorMessage.toString();
-    }
 }
