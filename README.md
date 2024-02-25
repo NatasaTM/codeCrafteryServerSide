@@ -33,6 +33,7 @@ The Code Craftery Server Side project is built using Java Spring Boot and MySQL 
 - Spring Boot Starter Test - Starter for testing Spring Boot applications
 - Spring Boot Starter Validation - Starter for validating data in Spring Boot applications
 - Commons IO - Utility classes for working with IO in Java
+- Spring Security Crypto - Provides functionalities for password encryption, hashing, and key generation, enhancing security in Spring applications.
 
 ### Development
 This project is under active development. 
