@@ -1,7 +1,6 @@
 package com.codecraftery.Code.craftery.server.side.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,19 +13,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table
-public class Admin {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty
     @Column(unique = true)
-    @NotEmpty
-    @Email
-    private String email;
-    @NotEmpty
-    private String password;
-    @NotEmpty
-    private String name;
-    @ManyToOne
-    private Role role;
-
+    private String Name;
 }
