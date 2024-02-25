@@ -1,5 +1,7 @@
 package com.codecraftery.Code.craftery.server.side.exceptions;
 
+import com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions.BlogCreationException;
+import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,5 +23,14 @@ public class GlobalExceptionHandler {
         // Return a generic error response
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), LocalDateTime.now()));
+    }
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException (ValidationException ex){
+        logger.error("Failed to validate" + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.of(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                LocalDateTime.now()
+        ));
     }
 }

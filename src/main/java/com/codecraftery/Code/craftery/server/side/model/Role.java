@@ -19,5 +19,5 @@ public class Role {
     private Long id;
     @NotEmpty
     @Column(unique = true)
-    private String Name;
+    private String name;
 }

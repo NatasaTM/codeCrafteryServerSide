@@ -4,6 +4,7 @@ import com.codecraftery.Code.craftery.server.side.dto.BlogDto;
 import com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions.BlogCreationException;
 import com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions.BlogNotFoundException;
 import com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions.BlogServiceException;
+import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationException;
 import com.codecraftery.Code.craftery.server.side.service.BlogService;
 import com.codecraftery.Code.craftery.server.side.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class BlogController {
 
 
     @PostMapping("/create-blog")
-    public ResponseEntity<BlogDto> createBlog(@RequestBody BlogDto blogDto) throws BlogCreationException {
+    public ResponseEntity<BlogDto> createBlog(@RequestBody BlogDto blogDto) throws BlogCreationException, ValidationException {
         return new ResponseEntity<>(blogService.addBlog(blogDto), HttpStatus.CREATED);
     }
 
@@ -55,7 +56,7 @@ public class BlogController {
     }
 
     @PutMapping("/update-blog/{id}")
-    public ResponseEntity<BlogDto> updateBlog(@PathVariable Long id, @RequestBody BlogDto blogDto) throws BlogServiceException, BlogNotFoundException, BlogCreationException {
+    public ResponseEntity<BlogDto> updateBlog(@PathVariable Long id, @RequestBody BlogDto blogDto) throws BlogServiceException, BlogNotFoundException, BlogCreationException, ValidationException {
 
         BlogDto updatedBlog = blogService.updateBlog(blogDto, id);
         return ResponseEntity.ok(updatedBlog);

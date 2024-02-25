@@ -2,9 +2,11 @@ package com.codecraftery.Code.craftery.server.side.service.impl;
 
 import com.codecraftery.Code.craftery.server.side.dto.AdminDto;
 import com.codecraftery.Code.craftery.server.side.model.Admin;
+import com.codecraftery.Code.craftery.server.side.repository.AdminRepository;
 import com.codecraftery.Code.craftery.server.side.service.AdminAuthenticationService;
 import com.codecraftery.Code.craftery.server.side.service.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService{
     private final AdminAuthenticationService adminAuthenticationService;
+    private final AdminRepository adminRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
