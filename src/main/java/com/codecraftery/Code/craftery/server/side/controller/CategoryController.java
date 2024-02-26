@@ -4,6 +4,7 @@ import com.codecraftery.Code.craftery.server.side.dto.CategoryDto;
 import com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions.CategoryCreationException;
 import com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions.CategoryNotFoundException;
 import com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions.CategoryServiceException;
+import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationException;
 import com.codecraftery.Code.craftery.server.side.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +31,7 @@ public class CategoryController {
 
 
     @PostMapping("/create-category")
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) throws CategoryCreationException {
+    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) throws CategoryCreationException, ValidationException {
         return new ResponseEntity<>(categoryService.addCategory(categoryDto), HttpStatus.CREATED);
     }
 
@@ -51,7 +55,7 @@ public class CategoryController {
     }
 
     @PutMapping("/update-category/{id}")
-    public ResponseEntity<CategoryDto> updateBlog(@PathVariable Long id, @RequestBody CategoryDto categoryDto) throws CategoryNotFoundException, CategoryServiceException, CategoryCreationException {
+    public ResponseEntity<CategoryDto> updateBlog(@PathVariable Long id, @RequestBody CategoryDto categoryDto) throws CategoryNotFoundException, CategoryServiceException, ValidationException {
 
         CategoryDto updatedCategory = categoryService.updateCategory(categoryDto, id);
         return ResponseEntity.ok(updatedCategory);

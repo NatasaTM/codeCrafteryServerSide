@@ -4,6 +4,7 @@ import com.codecraftery.Code.craftery.server.side.dto.ProjectDto;
 import com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions.ProjectCreationException;
 import com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions.ProjectNotFoundException;
 import com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions.ProjectServiceException;
+import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationException;
 import com.codecraftery.Code.craftery.server.side.service.CategoryService;
 import com.codecraftery.Code.craftery.server.side.service.ProjectService;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
@@ -31,7 +35,7 @@ public class ProjectController {
     }
 
     @PostMapping("/create-project")
-    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto) throws ProjectCreationException {
+    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto) throws ProjectCreationException, ValidationException {
 
         return new ResponseEntity<>(projectService.addProject(projectDto), HttpStatus.CREATED);
     }
@@ -48,7 +52,7 @@ public class ProjectController {
     }
 
     @PutMapping("/update-project/{id}")
-    public ResponseEntity<ProjectDto> updateProject(@RequestBody ProjectDto projectDto, @PathVariable Long id) throws ProjectCreationException, ProjectNotFoundException, ProjectServiceException {
+    public ResponseEntity<ProjectDto> updateProject(@RequestBody ProjectDto projectDto, @PathVariable Long id) throws ProjectNotFoundException, ProjectServiceException, ValidationException {
         return ResponseEntity.ok(projectService.updateProject(projectDto, id));
     }
 }

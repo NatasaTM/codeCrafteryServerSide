@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 @ControllerAdvice
 public class ProjectExceptionHandler {
 
@@ -29,14 +32,16 @@ public class ProjectExceptionHandler {
                 LocalDateTime.now()));
 
     }
+
     @ExceptionHandler(ProjectServiceException.class)
     public ResponseEntity<ErrorResponse> handleProjectServiceException(ProjectServiceException ex) {
         logger.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), LocalDateTime.now()));
     }
+
     @ExceptionHandler(ProjectCreationException.class)
-    public ResponseEntity<ErrorResponse> handleProjectCreationException (ProjectCreationException ex){
+    public ResponseEntity<ErrorResponse> handleProjectCreationException(ProjectCreationException ex) {
         logger.error("Failed to create project" + ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.of(
                 HttpStatus.BAD_REQUEST.value(),

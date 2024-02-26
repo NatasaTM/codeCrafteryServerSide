@@ -6,6 +6,9 @@ import com.codecraftery.Code.craftery.server.side.model.Admin;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 public interface AdminService {
     Admin saveAdmin(Admin admin);
 

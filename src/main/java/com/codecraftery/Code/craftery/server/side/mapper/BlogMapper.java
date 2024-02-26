@@ -3,11 +3,9 @@ package com.codecraftery.Code.craftery.server.side.mapper;
 import com.codecraftery.Code.craftery.server.side.dto.BlogDto;
 import com.codecraftery.Code.craftery.server.side.model.Blog;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-
+/**
+ * @author Natasa Todorov Markovic
+ */
 public class BlogMapper {
 
     public static BlogDto mapBlogToBlogDto(Blog blog) {
@@ -34,7 +32,6 @@ public class BlogMapper {
                 .build();
         return blog;
     }
-
 
 
 }

@@ -5,11 +5,13 @@ import com.codecraftery.Code.craftery.server.side.dto.ProjectDto;
 import com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions.ProjectCreationException;
 import com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions.ProjectNotFoundException;
 import com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions.ProjectServiceException;
+import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationErrorMessageBuilder;
+import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationException;
 import com.codecraftery.Code.craftery.server.side.model.Project;
 import com.codecraftery.Code.craftery.server.side.repository.ProjectRepository;
 import com.codecraftery.Code.craftery.server.side.service.ProjectService;
+import com.codecraftery.Code.craftery.server.side.validation.impl.ProjectValidator;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +25,17 @@ import java.util.stream.Collectors;
 import static com.codecraftery.Code.craftery.server.side.mapper.ProjectMapper.mapProjectDtoToProject;
 import static com.codecraftery.Code.craftery.server.side.mapper.ProjectMapper.mapProjectToProjectDto;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final ProjectValidator projectValidator;
     private static final Logger logger = LoggerFactory.getLogger(BlogServiceImpl.class);
-    private final Validator validator;
+    private final ValidationErrorMessageBuilder<Project> validationErrorMessageBuilder;
 
 
     @Override
@@ -40,7 +46,7 @@ public class ProjectServiceImpl implements ProjectService {
             return projectDto;
         } catch (DataAccessException e) {
             logger.error("Error finding project with ID " + id, e);
-            throw new ProjectServiceException("Error finding project with ID " + id + ": " + e.getMessage(), e);
+            throw new ProjectServiceException("Error finding project with ID " + id);
         }
     }
 
@@ -54,28 +60,28 @@ public class ProjectServiceImpl implements ProjectService {
             return projectDtos;
         } catch (DataAccessException ex) {
             logger.error("Error while retrieving projects from the database", ex);
-            throw new ProjectServiceException("Failed to retrieve blogs", ex);
+            throw new ProjectServiceException("Failed to retrieve blogs");
         }
     }
 
     @Override
-    public ProjectDto addProject(ProjectDto projectDto) throws ProjectCreationException {
-        Set<ConstraintViolation<Project>> violations = getConstraintViolations(projectDto);
+    public ProjectDto addProject(ProjectDto projectDto) throws ProjectCreationException, ValidationException {
+        Set<ConstraintViolation<Project>> violations = projectValidator.validate(mapProjectDtoToProject(projectDto));
         if (!violations.isEmpty()) {
             logger.error("ProjectValidation");
-            throw new ProjectCreationException(buildValidationErrorMessage(violations));
+            throw new ValidationException(validationErrorMessageBuilder.buildValidationErrorMessage(violations));
 
         }
         try {
             Project project = mapProjectDtoToProject(projectDto);
             Project savedProject = projectRepository.save(project);
             if (savedProject == null) {
-                throw new ProjectCreationException("Error saving project to database: ");
+                throw new ProjectCreationException("Error saving project to database!");
             }
             return mapProjectToProjectDto(savedProject);
         } catch (DataAccessException e) {
             logger.error("Error occurred while adding project to database" + e);
-            throw new ProjectCreationException("Error saving project to database: " + e.getMessage(), e);
+            throw new ProjectCreationException("Error saving project to database.");
         }
     }
 
@@ -91,17 +97,17 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectServiceException("Error while deleting project", ex);
         } catch (Exception e) {
             logger.error("Failed to delete project" + e);
-            throw new ProjectServiceException("Failed to delete project" + e.getMessage() + e);
+            throw new ProjectServiceException("Failed to delete project!");
         }
 
     }
 
     @Override
-    public ProjectDto updateProject(ProjectDto projectDto, Long id) throws ProjectCreationException, ProjectNotFoundException, ProjectServiceException {
-        Set<ConstraintViolation<Project>> violations = getConstraintViolations(projectDto);
+    public ProjectDto updateProject(ProjectDto projectDto, Long id) throws ProjectNotFoundException, ProjectServiceException, ValidationException {
+        Set<ConstraintViolation<Project>> violations = projectValidator.validate(mapProjectDtoToProject(projectDto));
         if (!violations.isEmpty()) {
             logger.error("ProjectValidation");
-            throw new ProjectCreationException(buildValidationErrorMessage(violations));
+            throw new ValidationException(validationErrorMessageBuilder.buildValidationErrorMessage(violations));
         }
 
         try {
@@ -118,21 +124,8 @@ public class ProjectServiceImpl implements ProjectService {
             return mapProjectToProjectDto(projectRepository.save(project));
         } catch (DataAccessException e) {
             logger.error(e.getMessage());
-            throw new ProjectServiceException("Error updating project: " + e.getMessage(), e);
+            throw new ProjectServiceException("Error updating project.");
         }
     }
 
-    private Set<ConstraintViolation<Project>> getConstraintViolations(ProjectDto projectDto) {
-        Project validateProject = mapProjectDtoToProject(projectDto);
-        Set<ConstraintViolation<Project>> violations = validator.validate(validateProject); // Validate the Blog object
-        return violations;
-    }
-
-    private String buildValidationErrorMessage(Set<ConstraintViolation<Project>> violations) {
-        StringBuilder errorMessage = new StringBuilder("Validation errors:");
-        for (ConstraintViolation<Project> violation : violations) {
-            errorMessage.append("<br>- ").append(violation.getPropertyPath()).append(": ").append(violation.getMessage());
-        }
-        return errorMessage.toString();
-    }
 }

@@ -1,6 +1,9 @@
 package com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions;
 
-public class CategoryNotFoundException extends Exception{
+/**
+ * @author Natasa Todorov Markovic
+ */
+public class CategoryNotFoundException extends Exception {
     public CategoryNotFoundException(String message) {
         super(message);
     }

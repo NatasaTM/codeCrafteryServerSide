@@ -11,7 +11,6 @@ import com.codecraftery.Code.craftery.server.side.repository.BlogRepository;
 import com.codecraftery.Code.craftery.server.side.service.BlogService;
 import com.codecraftery.Code.craftery.server.side.validation.impl.BlogValidator;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,9 @@ import java.util.stream.Collectors;
 import static com.codecraftery.Code.craftery.server.side.mapper.BlogMapper.mapBlogDtoToBlog;
 import static com.codecraftery.Code.craftery.server.side.mapper.BlogMapper.mapBlogToBlogDto;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,6 @@ public class BlogServiceImpl implements BlogService {
     private final BlogValidator blogValidator;
     private static final Logger logger = LoggerFactory.getLogger(BlogServiceImpl.class);
     private final ValidationErrorMessageBuilder<Blog> validationErrorMessageBuilder;
-
 
 
     @Override
@@ -47,7 +48,7 @@ public class BlogServiceImpl implements BlogService {
             return blogs;
         } catch (DataAccessException ex) {
             logger.error("Error while retrieving blogs from the database", ex);
-            throw new BlogServiceException("Failed to retrieve blogs", ex);
+            throw new BlogServiceException("Failed to retrieve blogs!");
         }
     }
 
@@ -61,7 +62,7 @@ public class BlogServiceImpl implements BlogService {
         } catch (DataAccessException e) {
             // Log the error if needed
             logger.error("Error finding blog with ID " + id, e);
-            throw new BlogServiceException("Error finding blog with ID " + id + ": " + e.getMessage(), e);
+            throw new BlogServiceException("Error finding blog with ID " + id);
         }
     }
 
@@ -99,7 +100,7 @@ public class BlogServiceImpl implements BlogService {
             throw new BlogServiceException("Error while deleting blog", ex);
         } catch (Exception e) {
             logger.error("Failed to delete blog" + e);
-            throw new BlogServiceException("Failed to delete blog" + e.getMessage() + e);
+            throw new BlogServiceException("Failed to delete blog!");
         }
 
     }
@@ -127,7 +128,7 @@ public class BlogServiceImpl implements BlogService {
             return mapBlogToBlogDto(blogRepository.save(blog));
         } catch (DataAccessException e) {
             logger.error(e.getMessage());
-            throw new BlogServiceException("Error updating blog: " + e.getMessage(), e);
+            throw new BlogServiceException("Error updating blog!");
         }
     }
 

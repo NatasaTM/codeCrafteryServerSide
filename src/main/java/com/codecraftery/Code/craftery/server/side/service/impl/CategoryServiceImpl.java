@@ -4,11 +4,13 @@ import com.codecraftery.Code.craftery.server.side.dto.CategoryDto;
 import com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions.CategoryCreationException;
 import com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions.CategoryNotFoundException;
 import com.codecraftery.Code.craftery.server.side.exceptions.categoryExceptions.CategoryServiceException;
+import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationErrorMessageBuilder;
+import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationException;
 import com.codecraftery.Code.craftery.server.side.model.Category;
 import com.codecraftery.Code.craftery.server.side.repository.CategoryRepository;
 import com.codecraftery.Code.craftery.server.side.service.CategoryService;
+import com.codecraftery.Code.craftery.server.side.validation.impl.CategoryValidator;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +24,17 @@ import java.util.stream.Collectors;
 import static com.codecraftery.Code.craftery.server.side.mapper.CategoryMapper.mapCategoryDtoToCategory;
 import static com.codecraftery.Code.craftery.server.side.mapper.CategoryMapper.mapCategoryToCategoryDto;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryValidator categoryValidator;
     private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
-    private final Validator validator;
+    private final ValidationErrorMessageBuilder<Category> validationErrorMessageBuilder;
+    
 
     @Override
     public List<CategoryDto> getAllCategories() throws CategoryServiceException {
@@ -44,11 +51,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto addCategory(CategoryDto categoryDto) throws CategoryCreationException {
-        Set<ConstraintViolation<Category>> violations = getConstraintViolations(categoryDto);
+    public CategoryDto addCategory(CategoryDto categoryDto) throws CategoryCreationException, ValidationException {
+        Set<ConstraintViolation<Category>> violations = categoryValidator.validate(mapCategoryDtoToCategory(categoryDto));
         if (!violations.isEmpty()) {
             logger.error("BlogValidation");
-            throw new CategoryCreationException(buildValidationErrorMessage(violations));
+            throw new ValidationException(validationErrorMessageBuilder.buildValidationErrorMessage(violations));
 
         }
         try {
@@ -98,11 +105,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto updateCategory(CategoryDto categoryDto, Long id) throws CategoryServiceException, CategoryNotFoundException, CategoryCreationException {
-        Set<ConstraintViolation<Category>> violations = getConstraintViolations(categoryDto);
+    public CategoryDto updateCategory(CategoryDto categoryDto, Long id) throws CategoryServiceException, CategoryNotFoundException, ValidationException {
+        Set<ConstraintViolation<Category>> violations = categoryValidator.validate(mapCategoryDtoToCategory(categoryDto));
         if (!violations.isEmpty()) {
             logger.error("CategoryValidation");
-            throw new CategoryCreationException(buildValidationErrorMessage(violations));
+            throw new ValidationException(validationErrorMessageBuilder.buildValidationErrorMessage(violations));
         }
 
         try {
@@ -120,18 +127,5 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
-    private Set<ConstraintViolation<Category>> getConstraintViolations(CategoryDto categoryDto) {
-        Category validateCategory = mapCategoryDtoToCategory(categoryDto);
-        Set<ConstraintViolation<Category>> violations = validator.validate(validateCategory);
-        return violations;
-    }
-
-    private String buildValidationErrorMessage(Set<ConstraintViolation<Category>> violations) {
-        StringBuilder errorMessage = new StringBuilder("Validation errors:");
-        for (ConstraintViolation<Category> violation : violations) {
-            errorMessage.append("<br>- ").append(violation.getPropertyPath()).append(": ").append(violation.getMessage());
-        }
-        return errorMessage.toString();
-    }
 
 }

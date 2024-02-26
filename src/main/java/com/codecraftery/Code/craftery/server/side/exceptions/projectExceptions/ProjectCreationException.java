@@ -1,6 +1,9 @@
 package com.codecraftery.Code.craftery.server.side.exceptions.projectExceptions;
 
-public class ProjectCreationException extends Exception{
+/**
+ * @author Natasa Todorov Markovic
+ */
+public class ProjectCreationException extends Exception {
     public ProjectCreationException(String message) {
         super(message);
     }

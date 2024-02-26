@@ -12,6 +12,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,7 +37,7 @@ public class Blog {
     private LocalDateTime updatedOn;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name="blog_category",
+            name = "blog_category",
             joinColumns = @JoinColumn(name = "blog_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )

@@ -1,6 +1,7 @@
 package com.codecraftery.Code.craftery.server.side.validation.impl;
 
-import com.codecraftery.Code.craftery.server.side.model.Blog;
+
+import com.codecraftery.Code.craftery.server.side.model.Category;
 import com.codecraftery.Code.craftery.server.side.validation.Validator;
 import jakarta.validation.ConstraintViolation;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +14,15 @@ import java.util.Set;
  */
 @Service
 @RequiredArgsConstructor
+public class CategoryValidator implements Validator<Category> {
 
-public class BlogValidator implements Validator<Blog> {
     private final jakarta.validation.Validator validator;
 
     @Override
-    public Set<ConstraintViolation<Blog>> validate(Blog blog) {
-        Set<ConstraintViolation<Blog>> violations = validator.validate(blog);
+    public Set<ConstraintViolation<Category>> validate(Category category) {
+        Set<ConstraintViolation<Category>> violations = validator.validate(category);
         return violations;
     }
 }
+
+

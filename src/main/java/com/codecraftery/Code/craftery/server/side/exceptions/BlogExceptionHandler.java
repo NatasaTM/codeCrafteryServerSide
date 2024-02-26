@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 @ControllerAdvice
 public class BlogExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(BlogExceptionHandler.class);
@@ -27,14 +30,16 @@ public class BlogExceptionHandler {
                 LocalDateTime.now()));
 
     }
+
     @ExceptionHandler(BlogServiceException.class)
     public ResponseEntity<ErrorResponse> handleBlogServiceException(BlogServiceException ex) {
         logger.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), LocalDateTime.now()));
     }
+
     @ExceptionHandler(BlogCreationException.class)
-    public ResponseEntity<ErrorResponse> handleBlogCreationException (BlogCreationException ex){
+    public ResponseEntity<ErrorResponse> handleBlogCreationException(BlogCreationException ex) {
         logger.error("Failed to create blog" + ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.of(
                 HttpStatus.BAD_REQUEST.value(),

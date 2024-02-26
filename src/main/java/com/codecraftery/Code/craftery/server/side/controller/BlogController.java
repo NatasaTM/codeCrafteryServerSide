@@ -6,7 +6,6 @@ import com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions.Blog
 import com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions.BlogServiceException;
 import com.codecraftery.Code.craftery.server.side.exceptions.validationExcpetions.ValidationException;
 import com.codecraftery.Code.craftery.server.side.service.BlogService;
-import com.codecraftery.Code.craftery.server.side.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequiredArgsConstructor

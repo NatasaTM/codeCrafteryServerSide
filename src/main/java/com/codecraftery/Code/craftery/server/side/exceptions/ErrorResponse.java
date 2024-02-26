@@ -1,8 +1,14 @@
 package com.codecraftery.Code.craftery.server.side.exceptions;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+
+/**
+ * @author Natasa Todorov Markovic
+ */
 @Data
 @RequiredArgsConstructor(staticName = "of")
 @Builder

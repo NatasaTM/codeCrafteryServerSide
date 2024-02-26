@@ -12,9 +12,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Natasa Todorov Markovic
+ */
 @Service
 @RequiredArgsConstructor
-public class AdminServiceImpl implements AdminService{
+public class AdminServiceImpl implements AdminService {
     private final AdminAuthenticationService adminAuthenticationService;
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;

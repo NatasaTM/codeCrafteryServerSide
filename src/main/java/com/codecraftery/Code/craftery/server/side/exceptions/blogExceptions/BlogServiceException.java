@@ -1,6 +1,9 @@
 package com.codecraftery.Code.craftery.server.side.exceptions.blogExceptions;
 
-public class BlogServiceException extends Exception{
+/**
+ * @author Natasa Todorov Markovic
+ */
+public class BlogServiceException extends Exception {
     public BlogServiceException(String message) {
         super(message);
     }

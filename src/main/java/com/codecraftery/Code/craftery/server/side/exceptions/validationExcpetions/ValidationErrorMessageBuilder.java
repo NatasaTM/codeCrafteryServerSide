@@ -4,8 +4,12 @@ import jakarta.validation.ConstraintViolation;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+
+/**
+ * @author Natasa Todorov Markovic
+ */
 @Service
-public class ValidationErrorMessageBuilder <T>{
+public class ValidationErrorMessageBuilder<T> {
 
     public String buildValidationErrorMessage(Set<ConstraintViolation<T>> violations) {
         StringBuilder errorMessage = new StringBuilder("Validation errors:");
