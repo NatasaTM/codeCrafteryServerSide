@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryValidator categoryValidator;
     private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
     private final ValidationErrorMessageBuilder<Category> validationErrorMessageBuilder;
-    
+
 
     @Override
     public List<CategoryDto> getAllCategories() throws CategoryServiceException {
@@ -82,7 +82,7 @@ public class CategoryServiceImpl implements CategoryService {
         } catch (DataAccessException e) {
             // Log the error if needed
             logger.error("Error finding category with ID " + id, e);
-            throw new CategoryServiceException("Error finding category with ID " + id + ": " + e.getMessage(), e);
+            throw new CategoryServiceException("Error finding category with ID ");
         }
     }
 
@@ -98,7 +98,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new CategoryServiceException("Error while deleting category", ex);
         } catch (Exception e) {
             logger.error("Failed to delete category" + e);
-            throw new CategoryServiceException("Failed to delete category" + e.getMessage() + e);
+            throw new CategoryServiceException("Failed to delete category");
         }
 
 

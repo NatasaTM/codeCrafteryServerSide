@@ -24,8 +24,5 @@ public interface CategoryService {
     CategoryDto updateCategory(CategoryDto categoryDto, Long id) throws CategoryServiceException, CategoryNotFoundException, ValidationException;
 
 
-//    Category findByName(String name);
-//    List<Category> findListById(List<Long> ids);
-
 }
 
