@@ -80,7 +80,7 @@ public class RoleServiceImpl implements RoleService {
             return mapToRoleDto(savedRole);
         } catch (DataAccessException e) {
             logger.error("Error occurred while adding role to database" + e);
-            throw new RoleCreationException("Error saving role to database: " + e.getMessage(), e);
+            throw new RoleCreationException("Error saving role to database: ");
         }
     }
 
