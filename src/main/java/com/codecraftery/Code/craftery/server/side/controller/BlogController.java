@@ -33,12 +33,12 @@ public class BlogController {
     }
 
 
-    @PostMapping("/create-blog")
+    @PostMapping("admin/create-blog")
     public ResponseEntity<BlogDto> createBlog(@RequestBody BlogDto blogDto) throws BlogCreationException, ValidationException {
         return new ResponseEntity<>(blogService.addBlog(blogDto), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/delete-blog/{id}")
+    @DeleteMapping("/admin/delete-blog/{id}")
     public ResponseEntity<Void> deleteBlog(@PathVariable Long id) throws BlogServiceException, BlogNotFoundException {
 
         blogService.deleteById(id);
@@ -57,7 +57,7 @@ public class BlogController {
 
     }
 
-    @PutMapping("/update-blog/{id}")
+    @PutMapping("/admin/update-blog/{id}")
     public ResponseEntity<BlogDto> updateBlog(@PathVariable Long id, @RequestBody BlogDto blogDto) throws BlogServiceException, BlogNotFoundException, ValidationException {
 
         BlogDto updatedBlog = blogService.updateBlog(blogDto, id);
