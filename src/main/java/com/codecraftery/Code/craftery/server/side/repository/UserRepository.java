@@ -1,6 +1,6 @@
 package com.codecraftery.Code.craftery.server.side.repository;
 
-import com.codecraftery.Code.craftery.server.side.model.Admin;
+import com.codecraftery.Code.craftery.server.side.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -8,6 +8,7 @@ import java.util.Optional;
 /**
  * @author Natasa Todorov Markovic
  */
-public interface AdminRepository extends JpaRepository<Admin, String> {
-    Optional<Admin> findByEmail(String email);
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByUsername(String username);
+
 }

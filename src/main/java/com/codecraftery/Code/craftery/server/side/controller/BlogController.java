@@ -9,6 +9,7 @@ import com.codecraftery.Code.craftery.server.side.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,12 +33,12 @@ public class BlogController {
         return ResponseEntity.ok(blogService.getAllBlogs());
     }
 
-
-    @PostMapping("admin/create-blog")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/create-blog")
     public ResponseEntity<BlogDto> createBlog(@RequestBody BlogDto blogDto) throws BlogCreationException, ValidationException {
         return new ResponseEntity<>(blogService.addBlog(blogDto), HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/delete-blog/{id}")
     public ResponseEntity<Void> deleteBlog(@PathVariable Long id) throws BlogServiceException, BlogNotFoundException {
 
@@ -46,7 +47,7 @@ public class BlogController {
 
 
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/blogs/{id}")
     public ResponseEntity<BlogDto> getBlogById(@PathVariable Long id) throws BlogServiceException, BlogNotFoundException {
 
@@ -56,7 +57,7 @@ public class BlogController {
 
 
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/update-blog/{id}")
     public ResponseEntity<BlogDto> updateBlog(@PathVariable Long id, @RequestBody BlogDto blogDto) throws BlogServiceException, BlogNotFoundException, ValidationException {
 

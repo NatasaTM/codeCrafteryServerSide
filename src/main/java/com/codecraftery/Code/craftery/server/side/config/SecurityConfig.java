@@ -1,5 +1,7 @@
 package com.codecraftery.Code.craftery.server.side.config;
 
+import com.codecraftery.Code.craftery.server.side.service.impl.JpaUserDetailService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -13,7 +15,11 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JpaUserDetailService userDetailService;
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -23,12 +29,11 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth ->{
-                    auth.requestMatchers("/api/blogs","/api/blogs/*","api/projects","api/projects/*","api/categories","api/categories/*").permitAll();
-                    auth.requestMatchers("api/user").hasRole("USER");
-                    auth.requestMatchers("api/admin").hasRole("ADMIN");
-
-                }).httpBasic(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/api/blogs", "/api/blogs/*", "api/projects", "api/projects/*", "api/categories", "api/categories/*", "api/smt").permitAll();
+                    auth.anyRequest().authenticated();
+                })
+                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 

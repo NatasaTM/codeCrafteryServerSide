@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author Natasa Todorov Markovic
  */
@@ -23,4 +25,7 @@ public class Role {
     @NotEmpty
     @Column(unique = true)
     private String name;
+
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
 }
